@@ -55,7 +55,7 @@ export default function Login() {
           
         </form>
         <div className="text-center">
-          <Link href="/register" className="text-sm text-orange-400 hover:underline">Don't have an account? Register</Link>
+          <Link href="/register" className="text-sm text-orange-400 hover:underline">Don&apos;t have an account? Register</Link>
         </div>
       </div>
     </div>

@@ -13,7 +13,6 @@ export default function ContentPage() {
   const router = useRouter();
   const params = useParams();
   const [content, setContent] = useState<Content | null>(null);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -50,7 +49,6 @@ export default function ContentPage() {
         setContent(data);
       } catch (err) {
         console.error('An error occurred in fetchContent:', err); // <-- Log 4
-        setError(err instanceof Error ? err.message : 'An error occurred.');
       }
     };
 
@@ -67,7 +65,7 @@ export default function ContentPage() {
     <div className="min-h-screen bg-card text-foreground p-8 flex items-center justify-center">
       <div className="text-center bg-card p-10 rounded-lg">
         <h1 className="text-3xl font-bold mb-4">Content Ready!</h1>
-        <p className="text-xl mb-8">"{content.title}"</p>
+        <p className="text-xl mb-8">&quot;{ content.title }&quot;</p>
         <div className="flex gap-4 justify-center">
           <Link href={`/summary/${params.id}`} className="px-6 py-3 font-bold text-foreground bg-orange-600 rounded-md hover:bg-orange-700">View Summary</Link>
           <Link href={`/quiz/${params.id}`} className="px-6 py-3 font-bold text-foreground bg-blue-600 rounded-md hover:bg-blue-700">Take Quiz</Link>

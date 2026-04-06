@@ -28,7 +28,6 @@ export default function QuizPage() { // <-- 2. Remove props from here
   const [userAnswers, setUserAnswers] = useState<{ [key: number]: string }>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!authIsLoading && !isAuthenticated) {
@@ -51,7 +50,7 @@ export default function QuizPage() { // <-- 2. Remove props from here
         console.log("DATA RECEIVED FROM BACKEND:", JSON.stringify(data, null, 2));
         setQuiz(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred.');
+        console.error('Failed to fetch quiz:', err);
       }
     };
 

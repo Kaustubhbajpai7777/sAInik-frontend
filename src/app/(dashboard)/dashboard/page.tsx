@@ -11,34 +11,25 @@ interface RecentContent {
   id: number;
   title: string;
   type: string;
+  createdAt: string;
 }
 interface RecentQuiz {
   score: number;
   totalQuestions: number;
   processedContent: { title: string };
 }
-interface DashboardData {
-  recentContent: RecentContent[];
-  recentQuizzes: RecentQuiz[];
-}
 
 export default function Dashboard() {
   const router = useRouter();
   const { isAuthenticated, isLoading, userName } = useAuth();
   const [stats, setStats] = useState<{ streak: number } | null>(null);
-  const [dashboardData, setDashboardData] = useState<any>(null); // Using 'any' for simplicity, you can use your defined types
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/login');
-    }
-  }, [isLoading, isAuthenticated, router]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchDashboardData();
-    }
-  }, [isAuthenticated]);
+  const [dashboardData, setDashboardData] = useState<{
+    recentContent: RecentContent[];
+    recentQuizzes: RecentQuiz[];
+    totalContent: number;
+    totalQuizzes: number;
+    averageScore: number;
+  } | null>(null);
 
   const fetchDashboardData = async () => {
     const token = localStorage.getItem('token');
@@ -85,16 +76,28 @@ export default function Dashboard() {
     }
   };
 
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchDashboardData();
+    }
+  }, [isAuthenticated]);
+
   const calculateStreak = (quizResults: RecentQuiz[]) => {
     if (!quizResults || quizResults.length === 0) return 0;
     
     const today = new Date();
     let streak = 0;
-    let currentDate = new Date(today);
+    const currentDate = new Date(today);
     
     // Convert quiz dates and sort by date
     const quizDates = quizResults.map(quiz => {
-      const date = new Date((quiz as any).completedAt);
+      const date = new Date((quiz as any).completedAt || new Date());
       return new Date(date.getFullYear(), date.getMonth(), date.getDate());
     }).sort((a, b) => b.getTime() - a.getTime());
     
@@ -143,14 +146,14 @@ export default function Dashboard() {
     return "🏆";
   };
 
-  const getTodayStats = (data: any[]) => {
+  const getTodayStats = (data: (RecentContent | RecentQuiz)[] | undefined) => {
     if (!data) return { content: 0, quizzes: 0, averageScore: 0 };
     
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
     const todayItems = data.filter(item => {
-      const itemDate = new Date(item.createdAt || item.completedAt);
+      const itemDate = new Date((item as any).createdAt || (item as any).completedAt);
       itemDate.setHours(0, 0, 0, 0);
       return itemDate.getTime() === today.getTime();
     });
@@ -158,7 +161,7 @@ export default function Dashboard() {
     if (data[0] && 'score' in data[0]) {
       // This is quiz data
       const averageScore = todayItems.length > 0 
-        ? Math.round(todayItems.reduce((sum, quiz) => sum + (quiz.score / quiz.totalQuestions) * 100, 0) / todayItems.length)
+        ? Math.round(todayItems.reduce((sum, quiz) => sum + ((quiz as RecentQuiz).score / (quiz as RecentQuiz).totalQuestions) * 100, 0) / todayItems.length)
         : 0;
       return { content: 0, quizzes: todayItems.length, averageScore };
     } else {
@@ -290,7 +293,7 @@ export default function Dashboard() {
             </div>
             <div className="space-y-3">
               {dashboardData?.recentContent?.length > 0 ? (
-                dashboardData.recentContent.map((item: any) => (
+                dashboardData.recentContent.map((item: RecentContent) => (
                   <Link href={`/content/${item.id}`} key={item.id} className="flex items-center gap-4 p-3 rounded-md hover:bg-secondary transition-colors border border-gray-600">
                     {item.type === 'pdf' ? <FileText className="text-blue-400" /> : <Video className="text-red-400" />}
                     <div className="flex-1">
@@ -316,7 +319,7 @@ export default function Dashboard() {
             </div>
             <div className="space-y-3">
               {dashboardData?.recentQuizzes?.length > 0 ? (
-                dashboardData.recentQuizzes.map((quiz: any, index: number) => {
+                dashboardData.recentQuizzes.map((quiz: RecentQuiz, index: number) => {
                   const percentage = Math.round((quiz.score / quiz.totalQuestions) * 100);
                   const scoreColor = percentage >= 80 ? 'text-green-400' : percentage >= 60 ? 'text-yellow-400' : 'text-red-400';
                   

@@ -75,7 +75,7 @@ export default function HistoryPage() {
               </Link>
             ))
           ) : (
-            <p className="text-muted-foreground text-center py-10">You haven't processed any content yet.</p>
+            <p className="text-muted-foreground text-center py-10">You haven&apos;t processed any content yet.</p>
           )}
         </div>
       </div>

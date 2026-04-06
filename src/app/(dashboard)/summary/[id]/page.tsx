@@ -18,7 +18,6 @@ export default function SummaryPage() { // <-- Remove params from here
   const contentId = params.id as string;
 
   const [content, setContent] = useState<Content | null>(null);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!authIsLoading && !isAuthenticated) {
@@ -39,7 +38,7 @@ export default function SummaryPage() { // <-- Remove params from here
         const data = await res.json();
         setContent(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred.');
+        console.error('Failed to fetch summary:', err);
       }
     };
 
@@ -50,10 +49,6 @@ export default function SummaryPage() { // <-- Remove params from here
 
   if (authIsLoading || !content) {
     return <div className="flex min-h-screen items-center justify-center bg-background text-foreground">Loading Summary...</div>;
-  }
-  
-  if (error) {
-    return <div className="flex min-h-screen items-center justify-center bg-background text-red-400">{error}</div>;
   }
 
   return (

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CheckCircle, BarChart, MessageSquare, BookOpen, BrainCircuit, Users } from 'lucide-react';
+import { BarChart, BrainCircuit, Users } from 'lucide-react';
 
 export default function LandingPage() {
   return (

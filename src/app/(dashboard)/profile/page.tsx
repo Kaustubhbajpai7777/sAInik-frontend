@@ -38,7 +38,7 @@ export default function ProfilePage() {
         const data = await res.json();
         setProfile(data);
         setName(data.name || '');
-      } catch (error) {
+      } catch {
         toast.error("Could not load profile.");
       } finally {
         setIsLoading(false);
@@ -70,7 +70,7 @@ export default function ProfilePage() {
 
         toast.success("Profile updated successfully!");
         setEditMode(false);
-    } catch (error) {
+    } catch {
         toast.error("Failed to update profile.");
     }
   };
